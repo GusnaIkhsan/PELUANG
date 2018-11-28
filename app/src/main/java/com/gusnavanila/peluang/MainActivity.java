@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -17,7 +16,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-        loadFragment(new HomeFragment());
+        loadFragment(new ReportFragment());
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -33,13 +32,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Fragment fragment = null;
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                fragment = new HomeFragment();
+                fragment = new ReportFragment();
                 break;
             case R.id.navigation_dashboard:
                 fragment = new DashboardFragment();
                 break;
             case R.id.navigation_notifications:
-                fragment = new NotificationsFragment();
+                fragment = new PreferencesFragment();
                 break;
         }
         return loadFragment(fragment);

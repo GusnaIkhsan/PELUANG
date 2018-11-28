@@ -16,7 +16,7 @@
         android:layout_marginRight="151dp"
         android:layout_marginStart="153dp"
         android:layout_marginTop="235dp"
-        android:text="Home"
+        android:text="Opsi"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
