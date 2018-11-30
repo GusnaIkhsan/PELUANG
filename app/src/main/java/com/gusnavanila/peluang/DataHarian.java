@@ -5,6 +5,9 @@ public class DataHarian {
     public int pemasukan;
     public String tanggal;
 
-    public DataHarian() {
+    public DataHarian(String tanggal, int pemasukan, int pengeluaran) {
+        this.tanggal = tanggal;
+        this.pemasukan = pemasukan;
+        this.pengeluaran = pengeluaran;
     }
 }
