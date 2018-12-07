@@ -9,4 +9,8 @@
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
+    <style name="NumberPickerText">
+        <item name="android:textSize">18dp</item>
+    </style>
+
 </resources>
