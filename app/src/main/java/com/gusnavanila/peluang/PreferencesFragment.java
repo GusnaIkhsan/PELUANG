@@ -24,6 +24,14 @@ public class PreferencesFragment extends Fragment {
         this._buttonEditTema = rootView.findViewById(R.id.buttonEditTema);
         this._buttonAbout = rootView.findViewById(R.id.buttonAbout);
 
+        this._buttonEditKategori.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent editKategori = new Intent(getActivity(),EditKategori.class);
+                startActivity(editKategori);
+            }
+        });
+
         /*Action handler*/
         this._buttonAbout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +40,8 @@ public class PreferencesFragment extends Fragment {
                 startActivity(aboutApp);
             }
         });
+
+
 
         return rootView;
     }

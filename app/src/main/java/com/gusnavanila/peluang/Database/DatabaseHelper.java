@@ -85,9 +85,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        String drop = "DROP IF TABLE EXISTS";
+        String drop = "DROP IF TABLE EXISTS ";
         db.execSQL(drop+ TABEL_TRANSAKSI);
-        db.execSQL(drop+TABEL_TIPE);
+        db.execSQL(drop+ TABEL_TIPE);
         onCreate(db);
     }
 
@@ -109,6 +109,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{
             return true;
         }
+    }
+
+    public boolean addDataKategori(String tipe, String kategori){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        long result;
+
+        cv.put(TIPE,tipe);
+        cv.put(KATEGORI,kategori);
+
+        result = db.insert(TABEL_TIPE,null,cv);
+
+
+        if (result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public Cursor getAllTipe(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM  'tipe_kategori'";
+        Cursor data = db.rawQuery(query, null);
+        return data;
     }
 
     public Cursor getIdTipe(String tipe, String kategori){
@@ -134,7 +159,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public Cursor getTotal(String tipe){
+    public Cursor getTotal(String tipe, String tanggal){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT sum(nominal) FROM transaksi JOIN tipe_kategori"
+                +" ON transaksi.id_kategori = tipe_kategori.id_kategori"
+                +" WHERE tipe_kategori.tipe = '"+tipe+"'"+" AND tanggal = '"+tanggal+"'";
+        Cursor data = db.rawQuery(query, null);
+        return data;
+    }
+
+    public Cursor getTotalHarian(String tipe){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT sum(nominal) FROM transaksi JOIN tipe_kategori"
                 +" ON transaksi.id_kategori = tipe_kategori.id_kategori"
@@ -142,4 +176,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor data = db.rawQuery(query, null);
         return data;
     }
+
+    public Cursor getTotalKemarin(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT tanggal, sum(nominal) AS jumlah FROM transaksi JOIN tipe_kategori"
+                +" ON transaksi.id_kategori = tipe_kategori.id_kategori"
+                +" GROUP BY tanggal";
+        Cursor data = db.rawQuery(query, null);
+        return data;
+    }
+
+    public boolean editKategori(int id, String tipe, String kategori){
+        SQLiteDatabase db = this.getWritableDatabase();
+//        String query = "UPDATE tipe_kategori SET tipe = '" + tipe +"', kategori = '"+kategori+"' WHERE id_kategori = '"+id+"'";
+//        db.execSQL(query);
+        ContentValues cv = new ContentValues();
+        cv.put(TIPE,tipe);
+        cv.put(KATEGORI,kategori);
+        String where = "id_kategori = '"+id+"'";
+        long result;
+        result = db.update(TABEL_TIPE,cv,where,null);
+
+        if(result == -1){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    public boolean deleteKategori(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String where = "id_kategori = '"+id+"'";
+        long result;
+        result = db.delete(TABEL_TIPE,where,null);
+
+        if(result == -1){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
 }

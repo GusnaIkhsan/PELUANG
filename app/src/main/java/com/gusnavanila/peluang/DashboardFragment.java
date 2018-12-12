@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 public class DashboardFragment extends Fragment {
     RecyclerView _recycleView, _recycleView2;
-    TextView _totalPemasukan,_totalPengeluaran;
+    TextView _totalPemasukan,_totalPengeluaran,_tanggal;
     DataHarianAdapter _dataHarianAdapter;
     DataTransaksiHarianAdapter _dataTransaksiHarianAdapter;
     ArrayList<DataHarian> _dataHarian = new ArrayList<DataHarian>();
@@ -41,15 +41,17 @@ public class DashboardFragment extends Fragment {
         _tambah = rootView.findViewById(R.id.button);
         _totalPemasukan = rootView.findViewById(R.id.totalPemasukan);
         _totalPengeluaran = rootView.findViewById(R.id.totalPengeluaran);
+        _tanggal = rootView.findViewById(R.id.tanggalHariIni);
         Calendar cal = Calendar.getInstance();
         _tanggalHariIni = String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.YEAR));
+        _tanggal.setText("Hari ini, "+_tanggalHariIni);
 
-        Cursor totalPengeluaran = _database.getTotal("Pengeluaran");
+        Cursor totalPengeluaran = _database.getTotal("Pengeluaran",_tanggalHariIni);
         while(totalPengeluaran.moveToNext()){
             _totalPengeluaran.setText("Rp. "+String.valueOf(totalPengeluaran.getInt(0)));
         }
 
-        Cursor totalPemasukan = _database.getTotal("Pemasukan");
+        Cursor totalPemasukan = _database.getTotal("Pemasukan",_tanggalHariIni);
         while(totalPemasukan.moveToNext()){
             _totalPemasukan.setText("Rp. "+String.valueOf(totalPemasukan.getInt(0)));
         }
@@ -71,7 +73,10 @@ public class DashboardFragment extends Fragment {
         horizontalDecoration.setDrawable(horizontalDivider);
         _recycleView2.addItemDecoration(horizontalDecoration);
 
-        _dataHarian.add(new DataHarian("10 Sep 2018",15000000,100000));
+        Cursor dataKemarin = _database.getTotalKemarin();
+        while (dataKemarin.moveToNext()){
+            _dataHarian.add(new DataHarian(dataKemarin.getString(0),dataKemarin.getInt(1),100000));
+        }
 
         _recycleView = rootView.findViewById(R.id.recyclerView);
         _dataHarianAdapter = new DataHarianAdapter(getActivity(),_dataHarian);
