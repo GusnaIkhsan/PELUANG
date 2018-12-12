@@ -118,6 +118,8 @@ public class EditKategori extends AppCompatActivity {
                 if (deleteData){
                     Toast.makeText(EditKategori.this,"Data Berhasil Dihapus", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
+                    _dataKategori.remove(pos);
+                    _dataKategoriAdapter.notifyDataSetChanged();
                 }else {
                     Toast.makeText(EditKategori.this,"Data Gagal Dihapus", Toast.LENGTH_SHORT).show();
                 }
