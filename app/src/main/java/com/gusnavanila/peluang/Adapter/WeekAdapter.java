@@ -33,7 +33,7 @@ public class WeekAdapter extends RecyclerView.Adapter <WeekAdapter.WeekViewHolde
     @NonNull
     @Override
     public WeekViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rv_totalWeek, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rv_total_week, parent, false);
         WeekViewHolder kontakViewHolder = new WeekViewHolder(itemView, mListener);
         return kontakViewHolder;
     }
