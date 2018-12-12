@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TambahTransaksi" />
-        <activity android:name=".AboutApp"></activity>
+        <activity android:name=".AboutApp" />
+        <activity android:name=".EditKategori"></activity>
     </application>
 
 </manifest>
