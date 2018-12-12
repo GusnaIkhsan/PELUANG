@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".TambahTransaksi" />
         <activity android:name=".AboutApp" />
-        <activity android:name=".DetailTransactionActivity"></activity>
+        <activity android:name=".DetailTransactionActivity"/>
+        <activity android:name=".EditKategori"/>
     </application>
 
 </manifest>
