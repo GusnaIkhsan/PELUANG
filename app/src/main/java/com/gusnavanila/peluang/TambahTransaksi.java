@@ -83,7 +83,7 @@ public class TambahTransaksi extends AppCompatActivity {
                     Calendar cal = Calendar.getInstance();
                     _tanggal = String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.YEAR));
 
-                    boolean insertData = _database.addData(_spinnerTipe.getSelectedItem().toString(),_idTipe,_jum,_des,_tanggal);
+                    boolean insertData = _database.addData(_idTipe,_jum,_des,_tanggal);
 //                    toastMessage(_spinnerTipe.getSelectedItem().toString()+" "+_spinnerKategori.getSelectedItem().toString()+" "+_idTipe+" "+_jum+" "+_des+" "+_tanggal);
 
                     if (insertData){

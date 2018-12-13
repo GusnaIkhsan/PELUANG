@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.gusnavanila.peluang.CustomClickListener.MyOnClickListener;
 import com.gusnavanila.peluang.Database.DatabaseHelper;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 
 public class EditKategori extends AppCompatActivity {
@@ -47,8 +48,8 @@ public class EditKategori extends AppCompatActivity {
         _rvKategori.findViewById(R.id.rvKategori);
         _dataKategoriAdapter = new DataKategoriAdapter(this, _dataKategori, new MyOnClickListener() {
             @Override
-            public void onItemClicked(int pos, String tipe,String kategori) {
-                persetujuanHapusAtauEdit(pos, tipe, kategori);
+            public void onItemClicked(int id, String tipe,String kategori, int posisi) {
+                persetujuanHapusAtauEdit(id, tipe, kategori, posisi);
             }
         });
         _rvKategori.setAdapter(_dataKategoriAdapter);
@@ -57,48 +58,50 @@ public class EditKategori extends AppCompatActivity {
         _dialogTambahKategori.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(EditKategori.this);
-                View mView = getLayoutInflater().inflate(R.layout.alert_dialog_kategori, null);
-                _kategori = mView.findViewById(R.id.etKategori);
-                _spinnerTipeKategori = mView.findViewById(R.id.spTipe);
-                _TambahKategori = mView.findViewById(R.id.btnTambahKategori);
-
-                ArrayAdapter<String> adapterTipeKategori = new ArrayAdapter<String>
-                        (EditKategori.this,android.R.layout.simple_spinner_item, arraySpinnerTipeKategori);
-                adapterTipeKategori.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                _spinnerTipeKategori.setAdapter(adapterTipeKategori);
-
-                mBuilder.setView(mView);
-                final AlertDialog dialog = mBuilder.create();
-                dialog.show();
-
-                _TambahKategori.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (_kategori.getText().toString().equalsIgnoreCase("")){
-                            Toast.makeText(EditKategori.this,"Kategori Tidak Boleh Kosong", Toast.LENGTH_SHORT).show();
-                        }else{
-                            boolean addDataKategori = _database.addDataKategori(_spinnerTipeKategori.getSelectedItem().toString(),
-                                    _kategori.getText().toString());
-                            if (addDataKategori){
-                                Toast.makeText(EditKategori.this,"Data Berhasil ditambahkan", Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                                finish();
-                                startActivity(getIntent());
-                            }else{
-                                Toast.makeText(EditKategori.this,"Data Gagal ditambahkan", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-
+                tambahKategori();
             }
         });
 
-
     }
 
-    public void persetujuanHapusAtauEdit(final int pos, final String tipe, final String kategori){
+    public void tambahKategori(){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(EditKategori.this);
+        View mView = getLayoutInflater().inflate(R.layout.alert_dialog_kategori, null);
+        _kategori = mView.findViewById(R.id.etKategori);
+        _spinnerTipeKategori = mView.findViewById(R.id.spTipe);
+        _TambahKategori = mView.findViewById(R.id.btnTambahKategori);
+
+        ArrayAdapter<String> adapterTipeKategori = new ArrayAdapter<String>
+                (EditKategori.this,android.R.layout.simple_spinner_item, arraySpinnerTipeKategori);
+        adapterTipeKategori.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        _spinnerTipeKategori.setAdapter(adapterTipeKategori);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();
+
+        _TambahKategori.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (_kategori.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(EditKategori.this,"Kategori Tidak Boleh Kosong", Toast.LENGTH_SHORT).show();
+                }else{
+                    boolean addDataKategori = _database.addDataKategori(_spinnerTipeKategori.getSelectedItem().toString(),
+                            _kategori.getText().toString());
+                    if (addDataKategori){
+                        Toast.makeText(EditKategori.this,"Data Berhasil ditambahkan", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        finish();
+                        startActivity(getIntent());
+                    }else{
+                        Toast.makeText(EditKategori.this,"Data Gagal ditambahkan", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+    public void persetujuanHapusAtauEdit(final int id, final String tipe, final String kategori, final int posisi){
 //        Toast.makeText(EditKategori.this,String.valueOf(pos)+" "+tipe+" "+kategori, Toast.LENGTH_SHORT).show();
         AlertDialog.Builder mBuilderHapusEdit = new AlertDialog.Builder(EditKategori.this);
         View mViewHapusEdit = getLayoutInflater().inflate(R.layout.alert_dialog_persetujuan, null);
@@ -113,12 +116,13 @@ public class EditKategori extends AppCompatActivity {
         _hapusKategori.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Boolean deleteData = _database.deleteKategori(pos);
+//                Toast.makeText(EditKategori.this,String.valueOf(id)+" "+String.valueOf(posisi), Toast.LENGTH_SHORT).show();
+                Boolean deleteData = _database.deleteKategori(id);
 
                 if (deleteData){
                     Toast.makeText(EditKategori.this,"Data Berhasil Dihapus", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
-                    _dataKategori.remove(pos);
+                    _dataKategori.remove(posisi);
                     _dataKategoriAdapter.notifyDataSetChanged();
                 }else {
                     Toast.makeText(EditKategori.this,"Data Gagal Dihapus", Toast.LENGTH_SHORT).show();
@@ -130,13 +134,13 @@ public class EditKategori extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                editKategori(pos, tipe, kategori);
+                editKategori(id, tipe, kategori, posisi);
             }
         });
 
     }
 
-    public void editKategori(final int pos, String tipe, String kategori){
+    public void editKategori(final int id, final String tipe, final String kategori, final int posisi){
 //        Toast.makeText(EditKategori.this,String.valueOf(pos)+" "+tipe+" "+kategori, Toast.LENGTH_SHORT).show();
         AlertDialog.Builder mBuilderEdit = new AlertDialog.Builder(EditKategori.this);
         View mViewEdit = getLayoutInflater().inflate(R.layout.alert_dialog_kategori, null);
@@ -168,7 +172,7 @@ public class EditKategori extends AppCompatActivity {
                 if (_kategori.getText().toString().equalsIgnoreCase("")){
                     Toast.makeText(EditKategori.this,"Kategori Tidak Boleh Kosong", Toast.LENGTH_SHORT).show();
                 }else {
-                    Boolean editData = _database.editKategori(pos,_spinnerTipeKategori.getSelectedItem().toString(),
+                    Boolean editData = _database.editKategori(id,_spinnerTipeKategori.getSelectedItem().toString(),
                             _kategori.getText().toString());
                     if (editData){
                         Toast.makeText(EditKategori.this,"Data Berhasil Diedit", Toast.LENGTH_SHORT).show();

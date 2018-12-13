@@ -34,13 +34,13 @@
 
             <TextView
                 android:id="@+id/tanggal"
-                android:layout_width="35dp"
+                android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="8dp"
                 android:text="10 SEP 2018"
-                android:textColor="#ffff"
                 android:textAlignment="center"
+                android:textColor="#ffff"
                 android:textSize="12sp" />
         </LinearLayout>
 

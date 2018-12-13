@@ -1,5 +1,5 @@
 package com.gusnavanila.peluang.CustomClickListener;
 
 public interface MyOnClickListener {
-    void onItemClicked(int pos, String tipe, String kategori);
+    void onItemClicked(int id, String tipe, String kategori,int posisi);
 }

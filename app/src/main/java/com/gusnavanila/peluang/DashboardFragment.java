@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.gusnavanila.peluang.CustomClickListener.DataHarianOnClickListener;
+import com.gusnavanila.peluang.CustomClickListener.RiwayatDataOnClickListener;
 import com.gusnavanila.peluang.Database.DatabaseHelper;
 
 import java.util.ArrayList;
@@ -29,7 +33,7 @@ public class DashboardFragment extends Fragment {
     DataTransaksiHarianAdapter _dataTransaksiHarianAdapter;
     ArrayList<DataHarian> _dataHarian = new ArrayList<DataHarian>();
     ArrayList<DataTransaksiHarian> _dataTransaksiHarian = new ArrayList<DataTransaksiHarian>();
-    Button _tambah;
+    Button _tambah, _hapusTransaksiHarian,_editTransaksiHarian;
     DatabaseHelper _database;
     String _tanggalHariIni;
 
@@ -58,12 +62,18 @@ public class DashboardFragment extends Fragment {
 
         Cursor dataTransaksi = _database.getTransaksiHarian(_tanggalHariIni);
         while (dataTransaksi.moveToNext()){
-            _dataTransaksiHarian.add(new DataTransaksiHarian(dataTransaksi.getString(1),dataTransaksi.getString(2),dataTransaksi.getInt(3)));
+            _dataTransaksiHarian.add(new DataTransaksiHarian(dataTransaksi.getInt(0),dataTransaksi.getString(1),
+                    dataTransaksi.getString(2),dataTransaksi.getString(3), dataTransaksi.getInt(4)));
         }
 //        _dataTransaksiHarian.add(new DataTransaksiHarian("Makanan","Makan Siang",15000));
 
         _recycleView2 = rootView.findViewById(R.id.recyclerView2);
-        _dataTransaksiHarianAdapter = new DataTransaksiHarianAdapter(getActivity(),_dataTransaksiHarian);
+        _dataTransaksiHarianAdapter = new DataTransaksiHarianAdapter(getActivity(), _dataTransaksiHarian, new DataHarianOnClickListener() {
+            @Override
+            public void onItemClicked(int id, String tipe, String kategori, int jumlah, String deskripsi, int posisi) {
+                hapusAtauEdit(id,tipe,kategori,jumlah,deskripsi,posisi);
+            }
+        });
         _recycleView2.setAdapter(_dataTransaksiHarianAdapter);
         _recycleView2.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -79,7 +89,12 @@ public class DashboardFragment extends Fragment {
         }
 
         _recycleView = rootView.findViewById(R.id.recyclerView);
-        _dataHarianAdapter = new DataHarianAdapter(getActivity(),_dataHarian);
+        _dataHarianAdapter = new DataHarianAdapter(getActivity(), _dataHarian, new RiwayatDataOnClickListener() {
+            @Override
+            public void onItemClicked(String tanggal) {
+                dataRiwayat(tanggal);
+            }
+        });
         _recycleView.setAdapter(_dataHarianAdapter);
         _recycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -92,5 +107,63 @@ public class DashboardFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void hapusAtauEdit(final int id, final String tipe, final String kategori, final int jumlah, final String deskripsi, final int posisi){
+        AlertDialog.Builder mBuilderHapusEdit = new AlertDialog.Builder(getActivity());
+        View mViewHapusEdit = getLayoutInflater().inflate(R.layout.alert_dialog_persetujuan, null);
+
+        _hapusTransaksiHarian = mViewHapusEdit.findViewById(R.id.btnHapus);
+        _editTransaksiHarian = mViewHapusEdit.findViewById(R.id.btnEdit);
+
+        mBuilderHapusEdit.setView(mViewHapusEdit);
+        final AlertDialog dialog = mBuilderHapusEdit.create();
+        dialog.show();
+
+        _hapusTransaksiHarian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(getActivity(),String.valueOf(id)+" "+String.valueOf(posisi)
+//                        +" "+deskripsi, Toast.LENGTH_SHORT).show();
+                Boolean deleteData = _database.deleteTransaksiHarian(id);
+                if (deleteData){
+                    Toast.makeText(getActivity(),"Data Berhasil Dihapus", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    _dataTransaksiHarian.remove(posisi);
+                    _dataTransaksiHarianAdapter.notifyDataSetChanged();
+                }else {
+                    Toast.makeText(getActivity(),"Data Gagal Dihapus", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        _editTransaksiHarian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(getActivity(),String.valueOf(id)+" "+tipe
+//                        +" "+kategori+" "+String.valueOf(jumlah)+" "+deskripsi+" "+posisi, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", id);
+                bundle.putString("tipe",tipe);
+                bundle.putString("kategori", kategori);
+                bundle.putInt("jumlah", jumlah);
+                bundle.putString("deskripsi", deskripsi);
+                bundle.putInt("posisi", posisi);
+
+                Intent editTransaksi = new Intent(getActivity(),EditTransaksiHarian.class);
+                editTransaksi.putExtras(bundle);
+                startActivity(editTransaksi);
+            }
+        });
+    }
+
+    public void dataRiwayat(String tanggal){
+        Bundle bundle = new Bundle();
+        bundle.putString("tanggal",tanggal);
+//        Toast.makeText(getActivity(),tanggal, Toast.LENGTH_SHORT).show();
+        Intent riwayat = new Intent(getActivity(),RiwayatTransaksi.class);
+        riwayat.putExtras(bundle);
+        startActivity(riwayat);
     }
 }

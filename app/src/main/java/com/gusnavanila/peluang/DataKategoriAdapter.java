@@ -43,7 +43,7 @@ public class DataKategoriAdapter extends RecyclerView.Adapter<DataKategoriAdapte
             @Override
             public void onClick(View view) {
 //                Toast.makeText(context,String.valueOf(i), Toast.LENGTH_SHORT).show();
-                _myonclick.onItemClicked(data.id_kategori, data.tipe, data.kategori);
+                _myonclick.onItemClicked(data.id_kategori, data.tipe, data.kategori, i);
             }
         });
 

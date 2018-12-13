@@ -91,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String tipe, int kategori,int jumlah, String deskripsi, String tanggal){
+    public boolean addData(int kategori,int jumlah, String deskripsi, String tanggal){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         long result;
@@ -152,7 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getTransaksiHarian(String tanggal){
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT tipe,kategori,deskripsi,nominal FROM transaksi JOIN tipe_kategori"
+        String query = "SELECT transaksi.id_transaksi,tipe,kategori,deskripsi,nominal FROM transaksi JOIN tipe_kategori"
                 +" ON transaksi.id_kategori = tipe_kategori.id_kategori"
                 +" WHERE tanggal = '"+tanggal+"'";
         Cursor data = db.rawQuery(query, null);
@@ -168,14 +168,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public Cursor getTotalHarian(String tipe){
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT sum(nominal) FROM transaksi JOIN tipe_kategori"
-                +" ON transaksi.id_kategori = tipe_kategori.id_kategori"
-                +" WHERE tipe_kategori.tipe = '"+tipe+"'";
-        Cursor data = db.rawQuery(query, null);
-        return data;
-    }
 
     public Cursor getTotalKemarin(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -188,8 +180,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean editKategori(int id, String tipe, String kategori){
         SQLiteDatabase db = this.getWritableDatabase();
-//        String query = "UPDATE tipe_kategori SET tipe = '" + tipe +"', kategori = '"+kategori+"' WHERE id_kategori = '"+id+"'";
-//        db.execSQL(query);
         ContentValues cv = new ContentValues();
         cv.put(TIPE,tipe);
         cv.put(KATEGORI,kategori);
@@ -209,6 +199,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String where = "id_kategori = '"+id+"'";
         long result;
         result = db.delete(TABEL_TIPE,where,null);
+
+        if(result == -1){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    public boolean deleteTransaksiHarian(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String where = "id_transaksi = '"+id+"'";
+        long result;
+        result = db.delete(TABEL_TRANSAKSI,where,null);
+
+        if(result == -1){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    public boolean editTransaksiHarian(int id,int tipe, int jumlah, String deskripsi){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(ID_KATEGORI_T,tipe);
+        cv.put(NOMINAL,jumlah);
+        cv.put(DESKRIPSI,deskripsi);
+        String where = "id_transaksi = '"+id+"'";
+        long result;
+        result = db.update(TABEL_TRANSAKSI,cv,where,null);
 
         if(result == -1){
             return false;

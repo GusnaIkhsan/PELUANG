@@ -8,16 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gusnavanila.peluang.CustomClickListener.DataHarianOnClickListener;
+
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 
 public class DataTransaksiHarianAdapter extends RecyclerView.Adapter<DataTransaksiHarianAdapter.DataTransaksiHarianViewHolder> {
     LayoutInflater _inflater;
     ArrayList<DataTransaksiHarian> dataTransaksiHarian;
+    DataHarianOnClickListener dataHarianOnClickListener;
 
-    public DataTransaksiHarianAdapter(Context context, ArrayList<DataTransaksiHarian> dataTransaksiHarian) {
+    public DataTransaksiHarianAdapter(Context context, ArrayList<DataTransaksiHarian> dataTransaksiHarian, DataHarianOnClickListener dataHarianOnClickListener) {
         this._inflater = LayoutInflater.from(context);
         this.dataTransaksiHarian = dataTransaksiHarian;
+        this.dataHarianOnClickListener = dataHarianOnClickListener;
     }
 
     @Override
@@ -27,11 +31,17 @@ public class DataTransaksiHarianAdapter extends RecyclerView.Adapter<DataTransak
     }
 
     @Override
-    public void onBindViewHolder(DataTransaksiHarianViewHolder dataTransaksiHarianViewHolder, int i) {
-        DataTransaksiHarian data = dataTransaksiHarian.get(i);
+    public void onBindViewHolder(DataTransaksiHarianViewHolder dataTransaksiHarianViewHolder, final int i) {
+        final DataTransaksiHarian data = dataTransaksiHarian.get(i);
         dataTransaksiHarianViewHolder._kategori.setText(data._kategori);
         dataTransaksiHarianViewHolder._deskripsi.setText(data._deskripsi);
         dataTransaksiHarianViewHolder._transaksi.setText(String.valueOf("Rp. "+data._transaksiHarian));
+        dataTransaksiHarianViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dataHarianOnClickListener.onItemClicked(data._id,data._tipe,data._kategori,data._transaksiHarian,data._deskripsi,i);
+            }
+        });
     }
 
     @Override

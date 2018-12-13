@@ -9,16 +9,20 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.TextView;
 
+import com.gusnavanila.peluang.CustomClickListener.RiwayatDataOnClickListener;
+
 import java.util.ArrayList;
 
 public class DataHarianAdapter extends RecyclerView.Adapter<DataHarianAdapter.DataHarianViewHolder> {
 
     LayoutInflater _inflater;
     ArrayList<DataHarian> dataHarian;
+    RiwayatDataOnClickListener riwayatDataOnClickListener;
 
-    public DataHarianAdapter(Context context, ArrayList<DataHarian> dataHarian) {
+    public DataHarianAdapter(Context context, ArrayList<DataHarian> dataHarian, RiwayatDataOnClickListener riwayatDataOnClickListener) {
         this._inflater = LayoutInflater.from(context);
         this.dataHarian = dataHarian;
+        this.riwayatDataOnClickListener = riwayatDataOnClickListener;
     }
 
     @NonNull
@@ -30,10 +34,16 @@ public class DataHarianAdapter extends RecyclerView.Adapter<DataHarianAdapter.Da
 
     @Override
     public void onBindViewHolder(DataHarianViewHolder dataHarianViewHolder, int i) {
-        DataHarian data = dataHarian.get(i);
+        final DataHarian data = dataHarian.get(i);
         dataHarianViewHolder._tanggal.setText(data.tanggal);
         dataHarianViewHolder._pemasukan.setText("Rp. "+String.valueOf(data.pemasukan));
         dataHarianViewHolder._pengeluaran.setText("Rp. "+String.valueOf(data.pengeluaran));
+        dataHarianViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                riwayatDataOnClickListener.onItemClicked(data.tanggal);
+            }
+        });
     }
 
     @Override
